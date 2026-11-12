@@ -1,0 +1,184 @@
+{
+  "_note": "Draft 8 of the P2 abstract (2026-10-08): the second problem (testbed patterns) now has its method and result in one sentence — a host-only rule against source bytes (area under the ROC curve 0.991 vs 0.865) plus the hourly pattern; the effect-size sentence removed; title rewritten in the exemplar title form (was: Fingerprint or Testbed? Integrating the Headerless UNSW-NB15 Files to Separate Attack Behavior from Lab Artifacts). Previous: drafts/abstract_v6.json.",
+  "title": "Separating Attack Behavior from Testbed Artifacts in the UNSW-NB15 Intrusion Detection Dataset",
+  "thesis": "UNSW-NB15 attacks have a measurable traffic fingerprint (small, short flows with family-specific byte sizes), but its host and hourly patterns are lab artifacts; telling them apart requires first integrating the four headerless files and repairing the 13 label spellings.",
+  "significance": "Anyone training intrusion detectors on this benchmark must use repaired labels and exclude host and time features, or the model learns the testbed instead of the attacks.",
+  "keywords": [
+    "network intrusion detection",
+    "UNSW-NB15",
+    "data integration",
+    "label cleaning",
+    "effect size"
+  ],
+  "track": "Engineering or Computer Science",
+  "session": "Poster (75 minutes)",
+  "numbers": {
+    "2,540,047": {
+      "means": "network flows in the four raw parts together",
+      "source": "load_log.txt"
+    },
+    "13": {
+      "means": "distinct raw spellings of the attack-category label",
+      "source": "load_log.txt"
+    },
+    "9": {
+      "means": "canonical attack families after repair",
+      "source": "load_log.txt"
+    },
+    "49": {
+      "means": "rows in the dataset's feature-definition file (one per column)",
+      "source": "verify_output.txt"
+    },
+    "19,195": {
+      "means": "flows labeled ' Fuzzers ' (with spaces)",
+      "source": "verify_output.txt"
+    },
+    "5,051": {
+      "means": "flows labeled ' Fuzzers' (leading space only)",
+      "source": "verify_output.txt"
+    },
+    "4": {
+      "means": "source hosts that sent any attack flow",
+      "source": "results.md"
+    },
+    "43": {
+      "means": "source hosts in the data",
+      "source": "results.md"
+    },
+    "3,977": {
+      "means": "citations of the UNSW-NB15 source paper (OpenAlex, checked 2026-10-07)",
+      "source": "references/background/moustafa2015.json"
+    },
+    "2023": {
+      "means": "year of Zoghi & Serpen's analysis as cited in the locked sentence (journal version; arXiv preprint 2021)",
+      "source": "references/background/zoghi2023.json"
+    },
+    "312": {
+      "means": "port values in the raw parts that are not decimal numbers (hexadecimal or '-')",
+      "source": "benefits.md"
+    },
+    "2.6": {
+      "means": "speed-up of the database path over reading the raw parts for the H2 query (15.0 s vs 5.8 s, one recorded run)",
+      "source": "benefits.md"
+    },
+    "4.1": {
+      "means": "DataFrame memory ratio, raw parts vs database join (1,980 MB vs 483 MB)",
+      "source": "benefits.md"
+    },
+    "0.991": {
+      "means": "area under the ROC curve of the rule 'flow comes from an attacking host' (H6)",
+      "source": "results.md"
+    },
+    "0.865": {
+      "means": "area under the ROC curve of source bytes alone (H6)",
+      "source": "results.md"
+    },
+    "0%": {
+      "means": "lowest hourly attack share (UTC hour)",
+      "source": "results.md"
+    },
+    "28.8%": {
+      "means": "highest hourly attack share (UTC hour)",
+      "source": "results.md"
+    }
+  },
+  "s1": {
+    "background": {
+      "text": "Intrusion detection is widely evaluated on UNSW-NB15, a benchmark built in a University of New South Wales lab (its source paper has 3,977 citations); prior analysis found class imbalance and overlap (Zoghi & Serpen, 2023), but inconsistent labels and testbed patterns that can be seen as attack behavior require attention.",
+      "locked": true,
+      "intent": "Intrusion detection is evaluated on UNSW-NB15 (3,977 citations); prior work found imbalance and overlap; two shortcomings need attention: inconsistent labels and testbed patterns seen as attack behavior. Word order changed by the instructor (2026-10-07) so the purpose comes before the dataset name."
+    },
+    "prior": {
+      "covered_by": "s1.background",
+      "intent": "Zoghi & Serpen found class imbalance and class overlap in UNSW-NB15."
+    },
+    "gaps": {
+      "G1": {
+        "covered_by": "s2.store.problem",
+        "intent": "Problem 1: the raw files cannot be read or counted correctly as delivered."
+      },
+      "G2": {
+        "covered_by": "s1.background",
+        "intent": "Problem 2: lab patterns can pass for attack behavior."
+      }
+    }
+  },
+  "s2": {
+    "store": {
+      "problem": {
+        "text": "Its 2,540,047 flows are in four headerless files, with 13 label spellings for 9 families. We constructed a third-normal-form SQLite database from its 49-row definition file, decoding ports and repairing labels.",
+        "intent": "Four headerless files, 13 spellings for 9 families; a third-normal-form database built from the definition file, ports decoded, labels repaired."
+      },
+      "solution": {
+        "covered_by": "s2.store.problem",
+        "intent": "Schema from the 49-row definition file; ports decoded; labels repaired."
+      },
+      "why": {
+        "text": "Compared with the raw files, the database contains 9 attack families instead of 13 groups (Fuzzers split 19,195 + 5,051), identifies 312 non-decimal ports, and computes family medians 2.6x faster with 4.1x less memory.",
+        "intent": "Against the raw files the database counts 9 families not 13 groups, catches 312 bad ports, and is 2.2x faster with 4.1x less memory."
+      }
+    },
+    "analysis": {
+      "question": {
+        "covered_by": "s3.proof.G2",
+        "intent": "Do attack flows differ from normal ones, and which patterns are behavior vs lab artifacts?"
+      },
+      "extract": {
+        "intent": "SQL joins load eight typed columns into pandas; effect size decides because all p-values are tiny.",
+        "covered_by": "s3.proof.G2"
+      },
+      "test_why": {
+        "covered_by": "s3.proof.G2",
+        "intent": "All five tests reach p < 0.001, so effect size decides."
+      },
+      "alternative": {
+        "covered_by": "s3.proof.G2",
+        "intent": "Raw labels give 13 groups instead of 9 families."
+      }
+    },
+    "visual": {
+      "form": {
+        "covered_by": "s3.finding",
+        "intent": "Log-scale boxplots of source bytes by family."
+      },
+      "reveals": {
+        "covered_by": "s3.finding",
+        "intent": "Families differ sharply in bytes."
+      }
+    }
+  },
+  "s3": {
+    "finding": {
+      "text": "Attack flows are clearly smaller and shorter than normal ones, families vary strongly in byte size, and service is moderately related to attacks.",
+      "intent": "Secondary results in words: H1 large (rank-biserial r 0.73 bytes, 0.55 duration), H2 strong (epsilon-squared 0.76), H3 moderate (Cramer's V 0.30)."
+    },
+    "proof": {
+      "G1": {
+        "covered_by": "s2.store.why",
+        "intent": "The database fixes the raw-file problems, measured against the raw files.",
+        "baseline": "the four raw CSV parts read as delivered",
+        "measure": "attack groups counted (13 vs 9), non-decimal ports caught (312), query time (15.0 s vs 5.8 s, one recorded run), DataFrame memory (1,980 MB vs 483 MB)"
+      },
+      "G2": {
+        "text": "However, linking each flow to its source host, we found all attacks are from 4 of 43 hosts; a rule that flags those hosts' flows, a shortcut any trained detector can learn, achieves an area under the ROC curve of 0.991, above source bytes at 0.865, and hourly attack shares (0% to 28.8%) likely follow the testbed schedule.",
+        "intent": "Host concentration and the hourly pattern come from the testbed, not behavior.",
+        "baseline": "a behavior feature (source bytes) used alone",
+        "measure": "area under the ROC curve of one-feature rules: host 0.991 vs source bytes 0.865; hourly attack share 0% to 28.8%"
+      }
+    },
+    "value": {
+      "covered_by": "s4.conclusion",
+      "intent": "Separating behavior from lab artifacts tells model builders which features to drop."
+    }
+  },
+  "s4": {
+    "conclusion": {
+      "text": "Byte and duration profiles represent attack behavior; host and time features may cause detectors to learn testbed artifacts.",
+      "intent": "Byte and duration profiles are behavior; host and time features risk teaching the lab."
+    },
+    "future": {
+      "text": "Next, scikit-learn and TensorFlow classifiers without those features will be evaluated per family on F1 and area under the curve.",
+      "intent": "Next: classifiers without host and time features, scored per family by F1 and area under the curve."
+    }
+  }
+}
