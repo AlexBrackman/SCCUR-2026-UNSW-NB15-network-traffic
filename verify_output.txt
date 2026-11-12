@@ -1,0 +1,49 @@
+      check_name        n
+----------------------  -
+foreign key violations  0
+source_part     n
+-----------  -------
+          1   700001
+          2   700001
+          3   700001
+          4   440044
+total        2540047
+label  no_family  has_family
+-----  ---------  ----------
+    0    2218764           0
+    1          0      321283
+raw_label_quoted    canonical     row_count
+----------------  --------------  ---------
+Analysis          Analysis             2677
+Backdoor          Backdoors            1795
+Backdoors         Backdoors             534
+DoS               DoS                 16353
+Exploits          Exploits            44525
+ Fuzzers          Fuzzers             19195
+ Fuzzers          Fuzzers              5051
+Generic           Generic            215481
+ Reconnaissance   Reconnaissance      12228
+Reconnaissance    Reconnaissance       1759
+ Shellcode        Shellcode            1288
+Shellcode         Shellcode             223
+Worms             Worms                 174
+    family      flows
+--------------  ------
+Generic         215481
+Exploits         44525
+Fuzzers          24246
+DoS              16353
+Reconnaissance   13987
+Analysis          2677
+Backdoors         2329
+Shellcode         1511
+Worms              174
+feature_defs
+------------
+          49
+duplicate_groups  extra_rows
+----------------  ----------
+           74354      526427
+  check_name    n
+--------------  -
+unparsed ports  9
